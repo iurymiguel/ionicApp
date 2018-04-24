@@ -20,7 +20,7 @@ export class ConfigProvider {
       return localStorage.getItem(config_key_name);
   }
 
-  //Saves information in local storage. ? means that the field is optional.
+  //Saves information in local storage. ? means that the field is optional (it can be null).
   setConfigData(showSlide?: boolean, name?: string, username?: string){
      let config = {
       showSlide: false,

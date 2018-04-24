@@ -24,7 +24,10 @@ export class FeedPage {
 	public loader;
 	public refresher;
 	public isRefreshing: boolean = false;
-
+	public lista_filmes = new Array<any>();
+	public nome_usuario:string = "Iury da Rocha Miguel"; //por padrao é public.
+	public page = 1;
+	public infiniteScroll;
 	public objeto_feed = {
 		titulo: "Iury da Rocha",
 		data: "Novemeber, 5 1999",
@@ -34,9 +37,7 @@ export class FeedPage {
 		time_comment: "11h ago"
 	}
 
-	public lista_filmes = new Array<any>();
-	public nome_usuario:string = "Iury da Rocha Miguel"; //por padrao é public.
-
+	
 	constructor(public navCtrl: NavController, public navParams: NavParams,
 				private moovieProvider: MoovieProvider, public loadingCtrl: LoadingController) {
 		
@@ -64,6 +65,16 @@ export class FeedPage {
 		this.navCtrl.push(FilmeDetalhesPage, {id: filme.id});
 	}
 
+
+
+	doInfinite(infiniteScroll) {
+		console.log('Begin async operation');
+		this.page++
+		this.infiniteScroll = infiniteScroll;
+		this.loadMovies(true);
+	  }
+
+
 	public somaDoisNumeros(num1:number, num2:number): void{
 		alert(num1 + num2);
 	}
@@ -74,13 +85,21 @@ export class FeedPage {
 		console.log('ionViewDidLoad FeedPage');
 	}
 
-	loadMovies(){
+	loadMovies(newPage: boolean = false){
 		this.presentLoading();
-		this.moovieProvider.getLatestMovies().subscribe(
+		this.moovieProvider.getLatestMovies(this.page).subscribe(
 			data=>{
 				const response = (data as any); //casting
-				this.lista_filmes = response.results;
-				//const objeto_retorno = JSON.parse(response); //converte para json.
+				
+				//const objeto_retorno = JSON.parse(response); //converte para json um response que tem o formato string.
+				
+				if(newPage){
+					this.lista_filmes = this.lista_filmes.concat(response.results);
+					this.infiniteScroll.complete();
+				}else if(this.page == 1){
+					this.lista_filmes = response.results;
+				}
+				
 				console.log(response);
 				this.closeLoading();	
 				if(this.isRefreshing){

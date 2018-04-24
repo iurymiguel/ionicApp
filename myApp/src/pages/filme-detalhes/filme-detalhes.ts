@@ -21,26 +21,26 @@ export class FilmeDetalhesPage {
 
   public filme;
   public filmeId;
-  public movieProvider: MoovieProvider;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public movieProviders: MoovieProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public movieProvider: MoovieProvider) {
     
   }
 
   ionViewDidEnter() {
     console.log('ionViewDidLoad FilmeDetalhesPage');
     this.filmeId = this.navParams.get("id");
+    this.loadMovieDetails();
     console.log(this.filmeId);
-    this.loadMovie()
   }
 
-  loadMovie(){
-    this.movieProvider.getMovieDetail(this.filmeId).subscribe(
+  loadMovieDetails(){
+    this.movieProvider.getMoviesDetails(this.filmeId).subscribe(
       data => {
-          let response = (data as any)._body;
+        this.filme = (data as any);
       },
       error =>{
-
+        console.log(error);
       }
     );
   }
